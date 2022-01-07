@@ -99,6 +99,18 @@ class Engine {
         return board
     }
     
+    @discardableResult
+    func addTile(at position: Position, value: Int) -> Bool {
+        let tiles = availableTiles()
+        guard let targetTile = tiles.first(where: { $0.position == position}) else {
+            return false
+        }
+        targetTile.value = value
+        delegate?.tileAdded(at: position, value: value)
+        return true
+        
+    }
+    
     func addRandTile() {
         let tiles = availableTiles()
         
@@ -136,7 +148,7 @@ class Engine {
         return current
     }
     
-    func move(direction d: Direction) -> Bool {
+    func move(direction d: Direction, addRandom: Bool) -> Bool {
         var traverseOrder = (Array(0..<size),Array(0..<size))
         if d == .RIGHT {
             traverseOrder.1.reverse()
@@ -193,7 +205,8 @@ class Engine {
             }
         }
         
-        if didMove {
+        if didMove && addRandom {
+            // i was here ... normal the solver can still move ... but not without this ... i dont know why
             addRandTile()
         }
         

@@ -15,6 +15,7 @@ extension UIColor {
 
 class TileView : UIView {
     let label : UILabel
+    var tapGesture: UITapGestureRecognizer?
 
     var value : Int = 0 {
         didSet {
@@ -43,7 +44,7 @@ class TileView : UIView {
         self.label = UILabel(frame: CGRect(x: 0, y: 0, width: size, height: size))
         self.label.text = "\(v)"
         self.label.textColor = v > 4 ? UIColor.white : UIColor.gray
-        self.label.font = UIFont.systemFont(ofSize: 20, weight: UIFontWeightHeavy)
+        self.label.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.heavy)
         self.label.textAlignment = NSTextAlignment.center
         
         super.init(frame: CGRect(x: position.x, y: position.y, width: size, height: size))

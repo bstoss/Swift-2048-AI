@@ -12,7 +12,7 @@ public class Solver {
     
     func runRandom(board: Board, firstMove: Direction) -> Int {
         let randomGame = Engine(withBoard: board)
-        let didMove = randomGame.move(direction: firstMove)
+        let didMove = randomGame.move(direction: firstMove, addRandom: true)
         
         if (!didMove) {
             return randomGame.score
@@ -21,7 +21,7 @@ public class Solver {
             if randomGame.isGameOver() {
                 break
             }
-            _ = randomGame.move(direction: Direction.randomMove())
+            _ = randomGame.move(direction: Direction.randomMove(), addRandom: true)
         }
         
         return randomGame.score

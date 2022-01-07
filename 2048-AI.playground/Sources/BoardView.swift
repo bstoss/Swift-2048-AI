@@ -6,7 +6,7 @@ class BoardView : UIView {
     var padding: CGFloat = 6.0
     var tiles: Dictionary<IndexPath, TileView>
     let animationDuration: TimeInterval = 0.08
-    
+        
     init(size s: Int, width: CGFloat) {
         size = s
         tiles = Dictionary()
@@ -51,7 +51,7 @@ class BoardView : UIView {
         tile.layer.setAffineTransform(CGAffineTransform(scaleX: 0, y: 0))
         
         addSubview(tile)
-        bringSubview(toFront: tile)
+        bringSubviewToFront(tile)
         tiles[IndexPath(row: i, section: j)] = tile
         
         UIView.animate(withDuration: animationDuration * 3.0, delay: 0.0, options: .curveEaseOut,
