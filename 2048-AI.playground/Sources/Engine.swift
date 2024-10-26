@@ -121,6 +121,7 @@ class Engine {
             if arc4random_uniform(10) == 9 {
                 value = 4
             }
+            value = 8
             tile.value = value
             delegate?.tileAdded(at: tile.position, value: tile.value)
         }
@@ -177,9 +178,10 @@ class Engine {
                 
                 let nextEmptyTile = findNextEmptyTile(from: currentTile, inDirection: d)
                 let nextTileTaken = nextTile(from: nextEmptyTile, inDirection: d)
-                
+
                 if (nextTileTaken != nil &&
                     nextTileTaken == currentTile &&
+                    currentTile.value != 2048 &&
                     !nextTileTaken!.wasMerged)
                 {
                     nextTileTaken?.value *= 2
@@ -219,7 +221,7 @@ class Engine {
             return false
         }
         
-        return board[i][j] == board[i][j+1]
+        return board[i][j] == board[i][j+1] && board[i][j].value != 2048
     }
     
     func hasSameTileBelow(position: Position) -> Bool {
@@ -228,7 +230,7 @@ class Engine {
             return false
         }
         
-        return board[i][j] == board[i+1][j]
+        return board[i][j] == board[i+1][j] && board[i][j].value != 2048
     }
     
     func isGameOver() -> Bool {

@@ -22,7 +22,7 @@ public class GameViewController : UIViewController, EngineProtocol {
     var makeMoveSwitch: UISwitch?
     var valueSlider: UISlider?
     var addTileValue = 0
-    var valueSliderLabel: UILabel?
+    var valueLabel: UILabel?
     
     var boardView: BoardView?
     var backupBoard: Board?
@@ -38,6 +38,7 @@ public class GameViewController : UIViewController, EngineProtocol {
     var delay: Double = 0.4
     
     var intSlider: UISlider?
+    var intLabel: UILabel?
     var intelligence: Int = 100 {
         didSet {
             solver?.intelligence = intelligence
@@ -131,38 +132,49 @@ public class GameViewController : UIViewController, EngineProtocol {
             }
             addButtonsStack.addArrangedSubview(rowStack)
         }
-
-        let valueSlider = UISlider()
-        self.view.addSubview(valueSlider)
-        self.valueSlider = valueSlider
-        valueSlider.maximumValue = 10
-        valueSlider.minimumValue = 0
-        valueSlider.value = Float(addTileValue)
-        valueSlider.tintColor = .brown
-        valueSlider.translatesAutoresizingMaskIntoConstraints = false
-        valueSlider.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
-        valueSlider.trailingAnchor.constraint(equalTo: boardView.leadingAnchor, constant: -10).isActive = true
-        valueSlider.topAnchor.constraint(equalTo: addButtonsStack.bottomAnchor, constant: 10).isActive = true
-        valueSlider.addTarget(self, action: #selector(self.valueSliderDidChange(_:)), for: .valueChanged)
-
-        let valueSliderLabel = UILabel()
-        self.view.addSubview(valueSliderLabel)
-        self.valueSliderLabel = valueSliderLabel
-        valueSliderLabel.text = "Value: \(addTileValue)"
-        valueSliderLabel.textColor = .brown
-        valueSliderLabel.font = UIFont.boldSystemFont(ofSize: 10)
-        valueSliderLabel.textAlignment = NSTextAlignment.center
-        valueSliderLabel.translatesAutoresizingMaskIntoConstraints = false
-        valueSliderLabel.topAnchor.constraint(equalTo: valueSlider.bottomAnchor, constant: 4).isActive = true
-        valueSliderLabel.centerXAnchor.constraint(equalTo: valueSlider.centerXAnchor).isActive = true
+//
+//        let valueSlider = UISlider()
+//        self.view.addSubview(valueSlider)
+//        self.valueSlider = valueSlider
+//        valueSlider.maximumValue = 10
+//        valueSlider.minimumValue = 0
+//        valueSlider.value = Float(addTileValue)
+//        valueSlider.tintColor = .brown
+//        valueSlider.translatesAutoresizingMaskIntoConstraints = false
+//        valueSlider.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
+//        valueSlider.trailingAnchor.constraint(equalTo: boardView.leadingAnchor, constant: -10).isActive = true
+//        valueSlider.topAnchor.constraint(equalTo: addButtonsStack.bottomAnchor, constant: 10).isActive = true
+//        valueSlider.addTarget(self, action: #selector(self.valueSliderDidChange(_:)), for: .valueChanged)
+        
+        let valueLabel = UILabel()
+        self.view.addSubview(valueLabel)
+        self.valueLabel = valueLabel
+        valueLabel.text = "Value: 2"
+        valueLabel.textColor = .brown
+        valueLabel.font = UIFont.boldSystemFont(ofSize: 10)
+        valueLabel.textAlignment = NSTextAlignment.center
+        valueLabel.translatesAutoresizingMaskIntoConstraints = false
+        valueLabel.topAnchor.constraint(equalTo: addButtonsStack.bottomAnchor, constant: 10).isActive = true
+        valueLabel.centerXAnchor.constraint(equalTo: addButtonsStack.centerXAnchor).isActive = true
+        
+        let stepper = UIStepper()
+        self.view.addSubview(stepper)
+        stepper.maximumValue = 10
+        stepper.minimumValue = 0
+        stepper.value = Double(addTileValue)
+        stepper.tintColor = .brown
+        stepper.translatesAutoresizingMaskIntoConstraints = false
+        stepper.topAnchor.constraint(equalTo: valueLabel.bottomAnchor, constant: 10).isActive = true
+        stepper.centerXAnchor.constraint(equalTo: valueLabel.centerXAnchor).isActive = true
+        stepper.addTarget(self, action: #selector(self.valueStepperDidChange(_:)), for: .valueChanged)
         
         let makeMoveSwitch = UISwitch()
         self.view.addSubview(makeMoveSwitch)
         self.makeMoveSwitch = makeMoveSwitch
         makeMoveSwitch.isOn = true
         makeMoveSwitch.translatesAutoresizingMaskIntoConstraints = false
-        makeMoveSwitch.topAnchor.constraint(equalTo: valueSliderLabel.bottomAnchor, constant: 4).isActive = true
-        makeMoveSwitch.centerXAnchor.constraint(equalTo: valueSliderLabel.centerXAnchor).isActive = true
+        makeMoveSwitch.topAnchor.constraint(equalTo: stepper.bottomAnchor, constant: 4).isActive = true
+        makeMoveSwitch.centerXAnchor.constraint(equalTo: stepper.centerXAnchor).isActive = true
         
         let backupBtn = UIButton()
         self.view.addSubview(backupBtn)
@@ -173,8 +185,23 @@ public class GameViewController : UIViewController, EngineProtocol {
         backupBtn.layer.cornerRadius = 8.0
         backupBtn.addTarget(self, action: #selector(self.backup(_:)), for: .touchUpInside)
         backupBtn.translatesAutoresizingMaskIntoConstraints = false
-        backupBtn.centerXAnchor.constraint(equalTo: valueSliderLabel.centerXAnchor).isActive = true
+        backupBtn.centerXAnchor.constraint(equalTo: makeMoveSwitch.centerXAnchor).isActive = true
         backupBtn.topAnchor.constraint(equalTo: makeMoveSwitch.bottomAnchor, constant: 10).isActive = true
+        backupBtn.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        
+        
+        let restoreBackupBtn = UIButton()
+        self.view.addSubview(restoreBackupBtn)
+        restoreBackupBtn.backgroundColor = .brown
+        restoreBackupBtn.setTitle("Restore Backup", for: .normal)
+        restoreBackupBtn.setTitleColor(UIColor.white, for: .normal)
+        restoreBackupBtn.titleLabel!.font = UIFont.boldSystemFont(ofSize: 12)
+        restoreBackupBtn.layer.cornerRadius = 8.0
+        restoreBackupBtn.addTarget(self, action: #selector(self.restoreBackup(_:)), for: .touchUpInside)
+        restoreBackupBtn.translatesAutoresizingMaskIntoConstraints = false
+        restoreBackupBtn.centerXAnchor.constraint(equalTo: backupBtn.centerXAnchor).isActive = true
+        restoreBackupBtn.topAnchor.constraint(equalTo: backupBtn.bottomAnchor, constant: 10).isActive = true
+        restoreBackupBtn.widthAnchor.constraint(equalToConstant: 200).isActive = true
         
         let scoreView = UILabel()
         self.view.addSubview(scoreView)
@@ -189,7 +216,8 @@ public class GameViewController : UIViewController, EngineProtocol {
         
         let intLabel = UILabel()
         self.view.addSubview(intLabel)
-        intLabel.text = "Intelligence:"
+        self.intLabel = intLabel
+        intLabel.text = "Intelligence: \(intelligence)"
         intLabel.textColor = .brown
         intLabel.font = UIFont.boldSystemFont(ofSize: 20)
         intLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -199,7 +227,7 @@ public class GameViewController : UIViewController, EngineProtocol {
         let intSlider = UISlider()
         self.view.addSubview(intSlider)
         self.intSlider = intSlider
-        intSlider.maximumValue = 100
+        intSlider.maximumValue = 10000
         intSlider.minimumValue = 0
         intSlider.value = Float(intelligence)
         intSlider.tintColor = .brown
@@ -297,23 +325,6 @@ public class GameViewController : UIViewController, EngineProtocol {
         boardView!.reset()
         game!.reset()
             
-        if let board = backupBoard {
-            for row in board {
-                for tile in row {
-                    if !tile.isEmpty {
-                        game!.addTile(at: tile.position, value: tile.value)
-                    }
-                }
-            }
-        }
-        
-//        if let tiles = backupTiles {
-//            for tile in tiles {
-//                if !tile.isEmpty {
-//                    game!.addTile(at: tile.position, value: tile.value)
-//                }
-//            }
-//        }
 //
         // game!.addTile(at: (1,0), value: 2)
        // game!.addTile(at: (3,2), value: 2)
@@ -377,6 +388,7 @@ public class GameViewController : UIViewController, EngineProtocol {
             if self.solverRunning {
 //                self.solveButtonDidPress(self.solverBtn)
                 let bestMove = self.solver!.findBestMove()
+//                print(bestMove)
                 self.makeMove(direction: bestMove, addRandom: true)
             }
         }
@@ -397,17 +409,41 @@ public class GameViewController : UIViewController, EngineProtocol {
         backupBoard = Engine.cloneBoard(board: game!.board)
     }
     
+    @objc func restoreBackup(_ sender:UIButton!) {
+        
+        if let board = backupBoard {
+            
+            solverRunning = false
+            boardView!.reset()
+            game!.reset()
+            
+            for row in board {
+                for tile in row {
+                    if !tile.isEmpty {
+                        game!.addTile(at: tile.position, value: tile.value)
+                    }
+                }
+            }
+        }
+    }
+    
     @objc func intSliderDidChange(_ sender:UISlider!) {
         intelligence = Int(round(sender.value))
+        intLabel!.text = "Intelligence: \(intelligence)"
     }
     
     @objc func delaySliderDidChange(_ sender:UISlider!) {
         delay = Double(sender.value)
     }
     
-    @objc func valueSliderDidChange(_ sender:UISlider!) {
+//    @objc func valueSliderDidChange(_ sender:UISlider!) {
+//        addTileValue = Int(sender.value)
+//        valueSliderLabel!.text = "Value: \(addTileValue)"
+//    }
+    
+    @objc func valueStepperDidChange(_ sender:UIStepper!) {
         addTileValue = Int(sender.value)
-        valueSliderLabel!.text = "Value: \(addTileValue)"
+        valueLabel!.text = "Value: \(pow(2, addTileValue+1))"
     }
     
     @objc func solveButtonDidPress(_ sender:UIButton!) {

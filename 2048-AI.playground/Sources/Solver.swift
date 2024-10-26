@@ -15,24 +15,29 @@ public class Solver {
         let didMove = randomGame.move(direction: firstMove, addRandom: true)
         
         if (!didMove) {
+            //print("No first move found for Move: \(firstMove)")
             return randomGame.score
         }
+        
+        //print("Start runRandom for Move: \(firstMove)")
         while true {
             if randomGame.isGameOver() {
+                //print("game over")
                 break
             }
             _ = randomGame.move(direction: Direction.randomMove(), addRandom: true)
+            //print(moved)
         }
-        
+        //print("Move: \(firstMove) - Score: \(randomGame.score)")
         return randomGame.score
     }
     
     func findBestMove() -> Direction {
         var average = 0
-        var best = 0
+        var best = -1
         var bestMove : Direction = Direction.randomMove()
         let numRuns = Int(Double(self.intelligence) * (0.1 + 0.00005 * Double(self.mainGame.score)))
-        
+        //print("findBestMove - runs: \(numRuns)")
         if (numRuns == 0) {
             return bestMove
         }
